@@ -1,0 +1,18 @@
+# Python-related
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+.venv/
+*.idea
+*.DS_STORE
+
+# Docker
+*.log
+*.pid
+*.seed
+*.pid.lock
+*.swp
+.env
+account_id

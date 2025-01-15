@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: StorageClass
+metadata:
+  name: ebs-sc
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer 
+parameters:
+  type: gp2
+  fsType: ext4
+allowVolumeExpansion: true
+reclaimPolicy: Retain
