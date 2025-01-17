@@ -1,17 +1,2 @@
-frontend:
-  image: "rebachi/stockpnl:frontend"
-  tag: ""
-  replicas: 2
-
-trade_service:
-  image: "rebachi/stockpnl:trade"
-  tag: ""
-  replicas: 2
-
-auth_service:
-  image: "rebachi/stockpnl:auth"
-  tag: ""
-  replicas: 2
-
 mysql:
   image: "mysql:5.7"
