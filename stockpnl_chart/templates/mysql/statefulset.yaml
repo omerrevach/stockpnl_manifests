@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata: 
+  name: mysql
+spec:
+  replicas: 1  # I used here 1 replica to avoid split-brain
+  serviceName: mysql
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        ports:
+          - name: tcp
+            protocol: TCP
+            containerPort: 3306
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: my-db-secret
+                key: mysql-root-password
+          - name: MYSQL_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: my-db-secret
+                key: mysql-database
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: my-db-secret
+                key: mysql-user
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: my-db-secret
+                key: mysql-password
+        volumeMounts:
+          - name: mysql-data
+            mountPath: /var/lib/mysql
+  volumeClaimTemplates: # this is for dynamic pvc creation
+    - metadata:
+        name: mysql-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 4Gi
+        storageClassName: ebs-sc
