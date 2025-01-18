@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trade
+spec:
+  replicas: {{ .Values.trade.replicas }}
+  selector:
+    matchLabels:
+      app: trade
+  template:
+    metadata:
+      labels:
+        app: trade
+    spec:
+      containers:
+        - name: trade
+          image: "{{ .Values.trade.image }}:{{ .Values.trade.tag }}"
+          ports:
+            - containerPort: {{ .Values.trade.service.targetPort }}
+          
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+          
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-db-secret
+                  key: mysql-root-password
+            - name:  MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: my-db-secret
+                  key: mysql-database
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-db-secret
+                  key: mysql-password
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: my-db-secret
+                  key: mysql-user
