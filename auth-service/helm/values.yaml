@@ -1,5 +1,5 @@
 auth:
-  image: "rebachi/stockpnl:auth"
+  image: "rebachi/stockpnl"
   tag: ""
   replicas: 2
   service:
