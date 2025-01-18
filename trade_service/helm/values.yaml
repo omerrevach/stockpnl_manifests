@@ -1,4 +1,4 @@
 trade_service:
-  image: "rebachi/stockpnl:trade"
+  image: "rebachi/stockpnl"
   tag: ""
   replicas: 2
