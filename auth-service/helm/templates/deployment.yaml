@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+spec:
+  replicas: {{ .Values.auth.replicas }}
+  selector: 
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - name: auth
+          image: "{{ .Values.auth.image }}:{{ .Values.auth.tag }}"
+          ports:
+            - containerPort: {{ .Values.auth.service.targetPort }}
+          
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+              
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-db-secret
+                  key: mysql-root-password
+            - name:  MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: my-db-secret
+                  key: mysql-database
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-db-secret
+                  key: mysql-password
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: my-db-secret
+                  key: mysql-user

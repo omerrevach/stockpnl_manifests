@@ -1,4 +1,7 @@
-auth_service:
+auth:
   image: "rebachi/stockpnl:auth"
   tag: ""
   replicas: 2
+  service:
+    port: 80
+    targetPort: 5001

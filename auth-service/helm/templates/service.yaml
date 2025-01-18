@@ -7,6 +7,6 @@ spec:
     app: auth
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 5001
+      port: {{ .Values.auth.service.port }}
+      targetPort: {{ .Values.auth.service.targetPort }}
   type: ClusterIP
