@@ -45,7 +45,14 @@ spec:
         volumeMounts:
           - name: mysql-data
             mountPath: /var/lib/mysql
-  volumeClaimTemplates: # this is for dynamic pvc creation
+          - name: mysql-init-script
+            mountPath: /docker-entrypoint-initdb.d/
+            subPath: db_init.sql  # to mount the script file
+      volumes:
+        - name: mysql-init-script
+          configMap:
+            name: mysql-init-script # my config map name
+  volumeClaimTemplates: # This is for dynamic PVC creation
     - metadata:
         name: mysql-data
       spec:
