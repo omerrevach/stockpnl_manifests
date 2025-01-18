@@ -7,6 +7,6 @@ spec:
     app: trade
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 5002
+      port: {{ .Values.trade.service.port }}
+      targetPort: {{ .Values.trade.service.targetPort }}
   type: ClusterIP
