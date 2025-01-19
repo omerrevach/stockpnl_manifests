@@ -31,3 +31,30 @@ kubectl create -f secrets.yml --dry-run=client -o yaml | kubeseal --format=yaml 
 
 # apply sealed secret
 kubectl apply -f my-sealed-secret.yaml
+
+# add this to secrets
+# certificate-arn: $(echo -n "$CERT_ARN" | base64)
+
+# ingress.yaml
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: app-ingress
+#   annotations:
+#     kubernetes.io/ingress.class: alb
+#     alb.ingress.kubernetes.io/scheme: internet-facing
+#     alb.ingress.kubernetes.io/target-type: ip
+#     alb.ingress.kubernetes.io/subnets: subnet-x, subnet-x
+#     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+#     alb.ingress.kubernetes.io/certificate-arn: ${CERT_ARN}
+# spec:
+#   rules:
+#     - http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: service-name-here
+#                 port:
+#                   number: 80
