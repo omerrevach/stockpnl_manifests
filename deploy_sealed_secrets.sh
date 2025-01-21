@@ -1,23 +1,30 @@
 #!/bin/bash
 
+# Database credentials
 DB_USER="trading_user"
 DB_PASSWORD="trading_pass"
 DB_DATABASE="trading_db"
 ROOT_PASSWORD="securepassword"
 
-# install kubeseal
-wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.19.2/kubeseal-0.19.2-linux-amd64.tar.gz
+# Install kubeseal
+wget -q https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.19.2/kubeseal-0.19.2-linux-amd64.tar.gz
 tar -xvzf kubeseal-0.19.2-linux-amd64.tar.gz
 sudo install -m 755 kubeseal /usr/local/bin/kubeseal
 
-# deploy the sealed secrets controller
+# Deploy the Sealed Secrets controller
 kubectl apply -f https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.19.2/controller.yaml
 
-cat <<EOF > secrets.yml 
+# Wait for the Sealed Secrets controller to be ready
+echo "Waiting for Sealed Secrets controller to be ready..."
+kubectl wait --for=condition=available --timeout=20s -n kube-system deployment/sealed-secrets-controller
+
+# Create an unsealed secret
+cat <<EOF > secrets.yml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: my-db-secret
+  name: mysql-secrets
+  namespace: default
 type: Opaque
 data:
   mysql-user: $(echo -n "$DB_USER" | base64)
@@ -26,12 +33,15 @@ data:
   mysql-root-password: $(echo -n "$ROOT_PASSWORD" | base64)
 EOF
 
-# seal secret
-kubectl create -f secrets.yml --dry-run=client -o yaml | kubeseal --format=yaml > my-sealed-secret.yaml
+# Seal the secret using kubeseal
+kubectl create -f secrets.yml --dry-run=client -o yaml | kubeseal --controller-name=sealed-secrets-controller --format=yaml > my-sealed-secret.yaml
 
-# apply sealed secret
+# Apply the sealed secret
 kubectl apply -f my-sealed-secret.yaml
+echo "Sealed secret applied successfully."
 
+# Clean up local unsealed secret
+rm -f secrets.yml
 # add this to secrets
 # certificate-arn: $(echo -n "$CERT_ARN" | base64)
 
