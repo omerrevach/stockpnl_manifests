@@ -1,9 +1,11 @@
 apiVersion: apps/v1
 kind: StatefulSet
-metadata: 
+metadata:
   name: mysql
+  labels:
+    app: mysql
 spec:
-  replicas: 1  # I used here 1 replica to avoid split-brain
+  replicas: 1
   serviceName: mysql
   selector:
     matchLabels:
@@ -13,46 +15,62 @@ spec:
       labels:
         app: mysql
     spec:
-      terminationGracePeriodSeconds: 10
+      terminationGracePeriodSeconds: 30
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.kubernetes.io/zone
+                    operator: In
+                    values:
+                      - eu-north-1a
+      initContainers:
+        - name: clean-data-dir
+          image: busybox
+          command: ["sh", "-c", "rm -rf /var/lib/mysql/*"]
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
       containers:
-      - name: mysql
-        image: mysql:5.7
-        ports:
-          - name: tcp
-            protocol: TCP
-            containerPort: 3306
-        env:
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: my-db-secret
-                key: mysql-root-password
-          - name: MYSQL_DATABASE
-            valueFrom:
-              secretKeyRef:
-                name: my-db-secret
-                key: mysql-database
-          - name: MYSQL_USER
-            valueFrom:
-              secretKeyRef:
-                name: my-db-secret
-                key: mysql-user
-          - name: MYSQL_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: my-db-secret
-                key: mysql-password
-        volumeMounts:
-          - name: mysql-data
-            mountPath: /var/lib/mysql
-          - name: mysql-init-script
-            mountPath: /docker-entrypoint-initdb.d/
-            subPath: db_init.sql  # to mount the script file
+        - name: mysql
+          image: mysql:5.7
+          imagePullPolicy: Always
+          ports:
+            - name: tcp
+              protocol: TCP
+              containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql-root-password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql-database
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql-password
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+            - name: mysql-init-script
+              mountPath: /docker-entrypoint-initdb.d/
       volumes:
         - name: mysql-init-script
           configMap:
-            name: mysql-init-script # my config map name
-  volumeClaimTemplates: # This is for dynamic PVC creation
+            name: mysql-init-script
+  volumeClaimTemplates:
     - metadata:
         name: mysql-data
       spec:

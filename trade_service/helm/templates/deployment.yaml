@@ -15,6 +15,7 @@ spec:
       containers:
         - name: trade
           image: "{{ .Values.trade.image }}:{{ .Values.trade.tag }}"
+          imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.trade.service.targetPort }}
           

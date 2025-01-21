@@ -8,4 +8,11 @@ parameters:
   type: gp2
   fsType: ext4
 allowVolumeExpansion: true
-reclaimPolicy: Retain
+reclaimPolicy: Delete
+allowedTopologies:
+  - matchLabelExpressions:
+      - key: topology.kubernetes.io/zone
+        values:
+          - eu-north-1a
+          - eu-north-1b
+          - eu-north-1c

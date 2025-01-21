@@ -16,3 +16,17 @@ env/
 *.swp
 .env
 account_id
+
+
+# SQLite database
+*.sqlite3
+
+# DB
+instance/
+
+
+.terraform/
+terraform
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*

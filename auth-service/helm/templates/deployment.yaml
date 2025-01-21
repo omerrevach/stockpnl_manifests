@@ -15,6 +15,7 @@ spec:
       containers:
         - name: auth
           image: "{{ .Values.auth.image }}:{{ .Values.auth.tag }}"
+          imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.auth.service.targetPort }}
           
