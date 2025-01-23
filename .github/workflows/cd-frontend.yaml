@@ -1,0 +1,25 @@
+name: CD pipeline of auth service
+
+on:
+  repository_dispatch:
+    types: [frontend_service_pipeline_complete]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.client_payload.tag }} # deploys the exact commit from ci and ensures correct version of code is checked out
+
+      - name: GitOps update docker image tag
+        uses: adwert-it/gitops-image-update@v1
+        with:
+            REPOSITORY_NAME: omerrevach/stockpnl_manifests
+            ACCESS_TOKEN: ${{ secrets.PAT }}
+            BRANCH: "main"
+            VALUES_FILE_PATH: "frontend/helm/values.yaml"
+            VALUE_NAME: "frontend.tag"
+            TAG: "${{ github.event.client_payload.tag }}"

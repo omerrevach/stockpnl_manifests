@@ -44,3 +44,8 @@
       ./deploy_all_services.sh
       ```
 
+### Websites that hepled me create this project for anyone interested in doing the same or learning something new:
+- Update docker image tag: https://github.com/marketplace/actions/gitops-update-image-tag
+- Trigger CD pipeline from CI pipeline: https://medium.com/hostspaceng/triggering-workflows-in-another-repository-with-github-actions-4f581f8e0ceb
+- MaxSqew: https://medium.com/@farshadnick/understanding-pod-topology-spread-constraints-in-kubernetes-44d33c85a40f
+- bump version: https://dev.to/natilou/automating-tag-creation-release-and-docker-image-publishing-with-github-actions-49jg
