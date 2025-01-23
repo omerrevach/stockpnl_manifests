@@ -2,7 +2,7 @@ name: CD pipeline of auth service
 
 on:
   repository_dispatch:
-    types: [frontend_service_pipeline_complete]
+    types: [trade_service_pipeline_complete]
 
 jobs:
   build:
@@ -20,6 +20,6 @@ jobs:
             REPOSITORY_NAME: omerrevach/stockpnl_manifests
             ACCESS_TOKEN: ${{ secrets.PAT }}
             BRANCH: "main"
-            VALUES_FILE_PATH: "frontend/helm/values.yaml"
-            VALUE_NAME: "frontend.tag"
+            VALUES_FILE_PATH: "trade_service/helm/values.yaml"
+            VALUE_NAME: "trade.tag"
             TAG: "${{ github.event.client_payload.tag }}"
