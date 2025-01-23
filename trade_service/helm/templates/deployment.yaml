@@ -18,7 +18,6 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.trade.service.targetPort }}
-          
           resources:
             limits:
               memory: "256Mi"
@@ -26,14 +25,13 @@ spec:
             requests:
               memory: "128Mi"
               cpu: "100m"
-          
           env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: my-db-secret
                   key: mysql-root-password
-            - name:  MYSQL_DATABASE
+            - name: MYSQL_DATABASE
               valueFrom:
                 secretKeyRef:
                   name: my-db-secret
@@ -48,3 +46,10 @@ spec:
                 secretKeyRef:
                   name: my-db-secret
                   key: mysql-user
+      topologySpreadConstraints:
+        - maxSkew: 1 # ensures difference in number of pods between AZ zones
+          topologyKey: topology.kubernetes.io/zone # tells k8s to distribute the pods across different AZs
+          whenUnsatisfiable: DoNotSchedule # prevents overloading on one zone i the expense of others
+          labelSelector:
+            matchLabels:
+              app: trade
