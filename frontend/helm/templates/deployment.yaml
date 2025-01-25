@@ -33,4 +33,4 @@ spec:
           whenUnsatisfiable: DoNotSchedule # prevents overloading on one zone i the expense of others
           labelSelector:
             matchLabels:
-              app: trade
+              app: frontend
