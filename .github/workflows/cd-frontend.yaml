@@ -16,6 +16,20 @@ jobs:
         with:
           ref: ${{ github.event.client_payload.tag }} # deploys the exact commit from ci and ensures correct version of code is checked out
 
+      - name: Create ArgoCD app 
+        run: |
+          argocd app create frontend-service \
+            --repo https://github.com/omerrevach/stockpnl_manifests.git \
+            --path frontend/helm \
+            --revision main \
+            --dest-server  https://kubernetes.default.svc \
+            --dest-namespace frontend \
+            --directory-recurse \
+            --sync-policy automated \
+            --self-heal \
+            --sync-option Prune=true \
+            --sync-option CreateNamespace=true
+
       - name: GitOps update docker image tag
         uses: adwert-it/gitops-image-update@v1
         with:
