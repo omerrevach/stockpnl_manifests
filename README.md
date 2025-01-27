@@ -1,11 +1,26 @@
-## Manifests of the stockpnl app
+## StockPnL Manifests
+### This repository contains Kubernetes manifests, Helm charts, and CI/CD pipelines for deploying the StockPnL trading platform. It includes infrastructure provisioning with Terraform, cost-optimized networking with a NAT instance, and advanced Kubernetes features for scalability and reliability
 
-### This handles the deployment of the stockpnl app that is in another repo. tf modules that deplo a vpc with nat instance as well and deploy and eks cluster.There is a helm chart for each microservice and for the mysql db as well.
+
+## Features
+
+1. **Helm Charts:**
+    - Deploy all microservices and a MySQL database with persistent storage
+
+2. **CD Piplines**
+    - CD pipeline for each microservice recieves a trigger when the CI pipeline was completed and  dynamically updates Helm chart tags, creates ArgoCD applications, and sync deployments to the cluster
+
+3. **Secure Credentials:**
+    - Sensitive data, such as database credentials, is encrypted using Sealed Secrets.
+
+4. **Kubernetes Enhancements:**
+    - **Horizontal Pod Autoscaling** (HPA): Automatically adjusts pod replicas based on resource usage
+    - **Pod Disruption** (MaxSkew): Ensures balanced pod distribution during updates and node maintenance
 
 #### `Prerequisites`
 - terraform
-- Docker
 - kubectl
+- kubeseal
 - helm
 
 ### Steps to setup:
